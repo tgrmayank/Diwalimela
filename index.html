@@ -1,4 +1,4 @@
-<!doctype html><html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Diwali Nagar 3D</title>
+<!doctype html><html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Diwali Nagar 3D | Game Creator TGR Mayank</title>
 <style>
 :root{color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
@@ -46,14 +46,28 @@ button{font:inherit;color:#fff4dc;background:#1b1030d9;border:1px solid #43296f;
 .row{display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap}.row select{font:inherit;background:#1b1030;color:#fff4dc;border-radius:8px;padding:4px}
 .go2{background:linear-gradient(135deg,#ffb627,#ff7a18)!important;color:#2a1200!important;border:0!important}
 #rgb{background:linear-gradient(135deg,#ff4da6,#ff7a18);color:#fff}
+
+/* Responsive toolbar: keep every control visible on phones, tablets and PCs */
+#top{box-sizing:border-box;z-index:100;max-width:calc(100vw - 16px);align-content:flex-start}
+#top button{flex:0 1 auto;min-width:0;white-space:nowrap}
+@media (max-width: 600px){
+  #top{left:5px;right:5px;top:calc(4px + env(safe-area-inset-top,0px));width:calc(100vw - 10px);max-width:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:4px;background:#0b0618c9;border:1px solid #43296f;border-radius:12px;overflow:visible;}
+  #top button{box-sizing:border-box;width:100%;min-width:0;max-width:100%;padding:6px 2px;font-size:clamp(9px,2.7vw,12px);line-height:1.15;min-height:31px;white-space:normal;overflow-wrap:anywhere;text-align:center;justify-content:center;}
+  #top #dn{order:0;min-width:0;padding:6px 2px;border:1px solid #ffb627;background:linear-gradient(135deg,#3b2362,#1b1030);box-shadow:0 0 8px #ffb62755;font-size:15px;}
+  #nm{min-width:0;max-width:none;padding:6px 2px;font-size:10px;overflow:hidden;text-overflow:ellipsis;text-align:center;}
+  #pc{min-width:0;white-space:nowrap;font-size:10px;text-align:center;}
+}
+@media (min-width:601px){
+  #top{flex-wrap:wrap;row-gap:6px;}
+}
 </style></head><body>
 <canvas id="c"></canvas>
-<div id="top"><button id="dir">A–Z 📍</button><button id="pp">🎵</button><button id="nx">⏭</button><span id="nm"></span><button id="fw">🎆</button><button id="dn">☀️</button><button id="ads">🪧</button><span id="pc">👥 1/8</span><button id="invb">👥 Invite</button></div>
+<div id="top"><button id="dir">A–Z 📍</button><button id="pp">🎵</button><button id="nx">⏭</button><span id="nm"></span><button id="fw">🎆</button><button id="dn">☀️</button><button id="ads">🪧</button><span id="pc">👥 1/8</span><button id="topPlans" class="top-tool">📋 Plans</button><button id="topActiveUsers" class="top-tool">🟢 Active Users</button><button id="invb">👥 Invite</button></div>
 <div id="chip">🛍 0 · ₹5000</div><div id="rvb" hidden>👹 Ravan <b id="rh">40</b>/40<i id="rbar"></i></div>
 <div id="panel" hidden></div><div id="menu" hidden></div><div id="toast"></div>
-<div id="happy" hidden><h1>🪔 Happy Diwali! 🪔</h1><p>Burai par achchai ki jeet — Ravan dahan ho gaya!</p></div>
+<div id="happy" hidden><h1>GAME CREATOR TGR MAYANK</h1><p>Instagram: @OFFLINE_MAYANK<br>Want to advertise here? Send us a message on WhatsApp: +91 89418 01033</p></div>
 <div id="act"><button id="rb" hidden>🎠 Baitho</button><button id="sb" hidden>🛒 Kharido</button><button id="bow" hidden>🏹 Teer</button></div>
-<div id="hint">Chalo: WASD / joystick (left) · dekho: drag (right) · dukaan/ghar ke darwaze mein ghuso · gaadi ke paas Chalao (2 dost saath baithte hain) · Mandir mein Aarti · Ravan ke paas jao to 🏹 Teer aayega</div>
+<div id="hint" hidden></div>
 <div id="js" hidden><i id="kb"></i></div>
 <div id="wel"><h1>🪔 Diwali Nagar</h1><p>Gali gali ghumo — ghar, dukaan, mall, mela, jhula, Ravan dahan.<br>Shubh Deepawali!</p><button id="go">Shuru karo</button><div id="nb" hidden><input id="ni" maxlength="14" placeholder="Apna naam likho"><button id="st" class="go2">Start 🎮</button></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -380,20 +394,33 @@ function zoneFix(){[peo,fauna].forEach(a=>a.forEach(q=>{if(Math.abs(q.lane)<40&&
  [-7,7].forEach(x=>M(BG(.4,7,.4),L(0x6a6a78),x,3.5,72.2));M(BG(14.4,.4,.4),L(0x2a6ab0),0,7,72.2);const s=lab('P · Parking','#5ce1ff',12);s.position.set(0,8.4,72.2);S.add(s)}
 // ---- Hoarding boards ----
 function wrapT(c,t,mw){const w=t.split(/\s+/),r=[];let l='';w.forEach(x=>{const n=l?l+' '+x:x;if(c.measureText(n).width>mw&&l){r.push(l);l=x}else l=n});r.push(l);return r}
-function paint(c,W,H,st,img,text,col,pos){c.clearRect(0,0,W,H);const s=W/768;
- if(img){const r=Math.max(W/img.width,H/img.height),iw=img.width*r,ih=img.height*r;c.drawImage(img,(W-iw)/2,(H-ih)/2,iw,ih)}
- else{const g=c.createLinearGradient(0,0,W,H);g.addColorStop(0,['#2a0a4a','#4a0a2a','#0a2a4a','#3a1a05'][st&3]);g.addColorStop(1,'#120626');c.fillStyle=g;c.fillRect(0,0,W,H);
-  for(let i=0;i<70;i++){c.fillStyle='hsla('+(25+i*37%40)+',100%,'+(60+i%3*10)+'%,'+(.25+i%5*.12)+')';c.beginPath();c.arc((i*127+st*53)%768*s,(i*71)%384*s,(1+i%3)*s,0,7);c.fill()}
-  const dx=W*.16,dy=H*.5;c.fillStyle='#ff9f1c';c.beginPath();c.ellipse(dx,dy+34*s,72*s,28*s,0,0,Math.PI);c.fill();c.fillStyle='#ffd23f';c.beginPath();c.moveTo(dx,dy-50*s);c.quadraticCurveTo(dx+28*s,dy-6*s,dx,dy+12*s);c.quadraticCurveTo(dx-28*s,dy-6*s,dx,dy-50*s);c.fill();
-  c.strokeStyle='#ffb627';c.lineWidth=3*s;for(let i=0;i<14;i++){const a=i/14*6.283;c.beginPath();c.arc(W*.87+Math.cos(a)*36*s,H*.5+Math.sin(a)*36*s,12*s,0,7);c.stroke()}}
- const def=!text&&!img,t=text||(def?'Happy Diwali':'');
- if(t){const ps=pos||'auto',yc=img?{top:.17,mid:.5,bot:.83,auto:.83}[ps]:{top:.25,mid:.5,bot:.75,auto:.5}[ps],wide=!(def||ps=='auto');let fs=(img?46:def?88:70)*s,ls;const mw=W*(img?.9:wide?.8:.58),mh=H*(img?.28:.55);
-  for(;;){c.font='800 '+fs+'px system-ui,sans-serif';ls=wrapT(c,t,mw);if(ls.length*fs*1.15<=mh||fs<14*s)break;fs*=.92}
-  const cx=img||wide?W/2:W*.55,th=ls.length*fs*1.15,y0=H*yc-th/2+(def?-8*s:0);c.textAlign='center';c.textBaseline='top';
-  if(img){c.fillStyle='rgba(0,0,0,.55)';c.fillRect(0,H*yc-H*.17,W,H*.34)}
-  let f2=col;if(!col){f2=c.createLinearGradient(0,y0,0,y0+th);f2.addColorStop(0,'#fff2b0');f2.addColorStop(1,'#ffb627')}c.fillStyle=f2;c.shadowColor=img?'#000':'#ff7a18';c.shadowBlur=14*s;ls.forEach((l,i)=>c.fillText(l,cx,y0+i*fs*1.15));c.shadowBlur=0}
- if(def){c.font='600 '+30*s+'px system-ui,sans-serif';c.fillStyle='#ffe9b0';c.textAlign='center';c.fillText('Diwali Celebration',W*.55,H*.78)}
- c.strokeStyle='#ffb627';c.lineWidth=8*s;c.strokeRect(4*s,4*s,W-8*s,H-8*s)}
+function paint(c,W,H,st,img,text,col,pos){
+ c.clearRect(0,0,W,H);const s=W/768;
+ if(!img&&!text){
+   const g=c.createLinearGradient(0,0,W,H);g.addColorStop(0,'#100c2b');g.addColorStop(.5,'#32104a');g.addColorStop(1,'#071d35');c.fillStyle=g;c.fillRect(0,0,W,H);
+   // Premium neon frame and subtle decorative lights
+   c.strokeStyle='#ffc84a';c.lineWidth=8*s;c.strokeRect(5*s,5*s,W-10*s,H-10*s);
+   c.strokeStyle='rgba(255,200,74,.35)';c.lineWidth=2*s;c.strokeRect(17*s,17*s,W-34*s,H-34*s);
+   for(let i=0;i<45;i++){c.fillStyle='hsla('+(35+i%5*35)+',100%,70%,'+(.18+(i%4)*.08)+')';c.beginPath();c.arc((i*127+st*53)%768*s,(i*71+23)%384*s,(1+i%3)*s,0,7);c.fill()}
+   c.textAlign='center';c.textBaseline='middle';
+   c.fillStyle='#ffd166';c.font='900 '+(st%2?42:46)*s+'px system-ui,sans-serif';c.shadowColor='#ff9d00';c.shadowBlur=10*s;c.fillText('GAME CREATOR',W*.5,H*.22);
+   c.fillStyle='#ffffff';c.font='900 '+(st%2?49:53)*s+'px system-ui,sans-serif';c.shadowColor='#b44cff';c.shadowBlur=13*s;c.fillText('TGR MAYANK',W*.5,H*.40);c.shadowBlur=0;
+   // Instagram gradient-style camera logo
+   const ix=W*.19,iy=H*.63,r=23*s,ig=c.createLinearGradient(ix-r,iy-r,ix+r,iy+r);ig.addColorStop(0,'#ffd776');ig.addColorStop(.45,'#ff3d77');ig.addColorStop(1,'#8b42ff');
+   c.fillStyle=ig;c.beginPath();c.roundRect?c.roundRect(ix-r,iy-r,2*r,2*r,7*s):c.rect(ix-r,iy-r,2*r,2*r);c.fill();
+   c.strokeStyle='#fff';c.lineWidth=3*s;c.beginPath();c.roundRect?c.roundRect(ix-r*.62,iy-r*.62,1.24*r,1.24*r,5*s):c.rect(ix-r*.62,iy-r*.62,1.24*r,1.24*r);c.stroke();c.beginPath();c.arc(ix,iy,5*s,0,Math.PI*2);c.stroke();c.beginPath();c.arc(ix+r*.38,iy-r*.38,2*s,0,Math.PI*2);c.fillStyle='#fff';c.fill();
+   c.textAlign='left';c.fillStyle='#fff';c.font='800 '+29*s+'px system-ui,sans-serif';c.fillText('@OFFLINE_MAYANK',W*.27,H*.63);
+   // WhatsApp contact badge
+   const wy=H*.81;c.fillStyle='#20c76a';c.beginPath();c.arc(W*.105,wy,15*s,0,Math.PI*2);c.fill();c.strokeStyle='#fff';c.lineWidth=2*s;c.beginPath();c.arc(W*.105,wy,8*s,.25,5.7);c.stroke();c.beginPath();c.moveTo(W*.095,wy+7*s);c.lineTo(W*.088,wy+12*s);c.lineTo(W*.102,wy+9*s);c.stroke();
+   c.textAlign='left';c.fillStyle='#e9fff1';c.font='800 '+25*s+'px system-ui,sans-serif';c.fillText('WhatsApp: +91 89418 01033',W*.16,wy);
+   c.textAlign='center';c.fillStyle='#ffe7a3';c.font='700 '+20*s+'px system-ui,sans-serif';c.fillText('WANT TO ADVERTISE HERE?',W*.5,H*.93);
+ }else{
+   if(img){const r=Math.max(W/img.width,H/img.height),iw=img.width*r,ih=img.height*r;c.drawImage(img,(W-iw)/2,(H-ih)/2,iw,ih)}
+   else{const g=c.createLinearGradient(0,0,W,H);g.addColorStop(0,['#2a0a4a','#4a0a2a','#0a2a4a','#3a1a05'][st&3]);g.addColorStop(1,'#120626');c.fillStyle=g;c.fillRect(0,0,W,H)}
+   const t=text||'';if(t){const ps=pos||'auto',yc={top:.2,mid:.5,bot:.8,auto:.5}[ps]||.5;let fs=(img?46:58)*s,ls;const mw=W*.88,mh=H*.7;for(;;){c.font='800 '+fs+'px system-ui,sans-serif';ls=wrapT(c,t,mw);if(ls.length*fs*1.15<=mh||fs<14*s)break;fs*=.92}const th=ls.length*fs*1.15,y0=H*yc-th/2;c.textAlign='center';c.textBaseline='top';if(img){c.fillStyle='rgba(0,0,0,.55)';c.fillRect(0,H*yc-H*.18,W,H*.36)}c.fillStyle=col||'#ffd23f';c.shadowColor='#ff7a18';c.shadowBlur=12*s;ls.forEach((l,i)=>c.fillText(l,W/2,y0+i*fs*1.15));c.shadowBlur=0}
+ }
+ c.strokeStyle='#ffb627';c.lineWidth=8*s;c.strokeRect(4*s,4*s,W-8*s,H-8*s)
+}
 const brd=[];
 function mkBoard(px,pz,dx,dz,d,st){const g=new T.Group();g.position.set(px,0,pz);g.rotation.y=Math.atan2(dx,dz);g.scale.setScalar(d);S.add(g);const k=cv(512,256),tex=new T.CanvasTexture(k),fr=new T.MeshLambertMaterial({color:0x2a2a35});
  [-4.8,4.8].forEach(x=>M(BG(.4,8,.4),L(0x44444f),x,4,0,g));M(BG(12.8,6.8,.4),fr,0,10.5,0,g);M(dg('bdp',()=>new T.PlaneGeometry(12,6)),new T.MeshBasicMaterial({map:tex}),0,10.5,.22,g);
@@ -585,4 +612,204 @@ $('pp').addEventListener('click',showBar);$('nm').addEventListener('click',()=>{
 setInterval(()=>{try{clearInterval(tm)}catch(e){}
  if(typeof mg!='undefined'&&mg&&sg){const v=playing?0:null;if(playing){mg.gain.value=0;sg.gain.value=0}else{if(mg.gain.value==0)mg.gain.value=.5;if(sg.gain.value==0)sg.gain.value=.9}}},150);
 })();</script>
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const style = document.createElement('style');
+  style.textContent = `
+    /* Disable the old per-board text/image editor; ads are managed from the start screen. */
+    #ads,#eb,#adp{display:none!important}
+    #top .top-tool{font-size:12px;padding:7px 10px;border:1px solid #35ff9a88;background:linear-gradient(135deg,#172b38e8,#1b1030ed);white-space:nowrap;box-shadow:0 0 10px #35ff9a18}
+    #top #topPlans{border-color:#ffbf3688;color:#ffdc93}
+    #top #topActiveUsers{color:#aaffd0}
+    #wel .ad-start-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;max-width:420px;width:100%;margin:4px auto}
+    #wel .ad-start-actions[hidden]{display:none!important}
+    #wel .ad-start-actions button{font-size:15px;padding:10px 15px;border-radius:999px;background:#1b1030;color:#fff4dc;border:1px solid #ffb627}
+    #activeUsersPanel{position:fixed;inset:0;z-index:1001;display:flex;align-items:center;justify-content:center;padding:18px;background:#05020de8}
+    #activeUsersPanel[hidden]{display:none!important}
+    #activeUsersPanel .au-card{width:min(100%,380px);text-align:center;padding:24px 18px;border-radius:22px;border:1px solid #28e68a;background:linear-gradient(145deg,#071b2a,#140a2a);color:#fff;box-shadow:0 0 35px #00ff9a35}
+    #activeUsersPanel .au-number{font-size:clamp(42px,12vw,64px);font-weight:900;letter-spacing:1px;color:#35ff9a;text-shadow:0 0 18px #00ff9a75;margin:14px 0;transition:transform .25s}
+    #activeUsersPanel .au-live{display:inline-flex;align-items:center;gap:7px;color:#9dffd0;font-weight:800}
+    #activeUsersPanel .au-dot{width:9px;height:9px;border-radius:50%;background:#35ff9a;box-shadow:0 0 12px #35ff9a;animation:auPulse 1s infinite}
+    #activeUsersPanel .au-list{display:grid;gap:8px;margin-top:16px;text-align:left}
+    #activeUsersPanel .au-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border:1px solid #ffffff20;border-radius:11px;background:#ffffff08;font-size:13px;color:#e9f8ff}
+    #activeUsersPanel .au-row b{color:#35ff9a;font-variant-numeric:tabular-nums;font-size:14px}
+    #activeUsersPanel .au-card{max-height:90dvh;overflow:auto}
+    @keyframes auPulse{50%{opacity:.35;transform:scale(.75)}}
+        #activeUsersPanel button{padding:10px 18px;border-radius:12px;border:1px solid #60428b;background:#24133f;color:#fff4dc}
+    #adflow{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:14px;background:#05020de8;touch-action:pan-y;overflow:auto}
+    #adflow[hidden]{display:none!important}
+    #adflow .af-card{width:min(100%,460px);max-height:92dvh;overflow:auto;background:linear-gradient(155deg,#21103c,#10091e);border:1px solid #ffb627;border-radius:20px;padding:16px;box-shadow:0 15px 55px #000a;display:flex;flex-direction:column;gap:12px;color:#fff4dc}
+    #adflow h2{font-size:23px;color:#ffbf36;margin:0}#adflow h3{margin:0;color:#ffcf65}
+    #adflow p{margin:0;line-height:1.45;color:#ddcfee;font-size:13px}
+    #adflow .af-row{display:flex;gap:8px;flex-wrap:wrap}
+    #adflow button{cursor:pointer;padding:10px 13px;border-radius:12px;border:1px solid #60428b;background:#24133f;color:#fff4dc}
+    #adflow button.primary{background:linear-gradient(135deg,#ffbf36,#ff7818);color:#281200;border:0;font-weight:800}
+    #adflow button:disabled{opacity:.45}
+    #adflow input:not([type=file]),#adflow textarea{width:100%;box-sizing:border-box;background:#090513;color:#fff4dc;border:1px solid #60428b;border-radius:10px;padding:11px;font:inherit}
+    #adflow textarea{min-height:76px;resize:vertical}#adflow label{font-size:13px;color:#ffdc93}
+    #adflow .af-plan{flex:1;min-width:135px;text-align:left;border:1px solid #6d4a95;border-radius:14px;padding:13px;background:#190d2d}
+    #adflow .af-plan.selected{outline:2px solid #ffbf36;background:#342047}
+    #adflow .af-price{font-size:25px;font-weight:900;color:#ffca48;margin:6px 0}
+    #adflow .af-benefits{font-size:12px;line-height:1.6;color:#e8d9ff}
+    #adflow .af-close{align-self:flex-end;padding:5px 10px}
+    #adflow .af-qr{width:220px;height:220px;max-width:70vw;object-fit:contain;align-self:center;background:white;padding:8px;border-radius:12px}
+    #adflow .af-status{font-size:12px;color:#ffdb8b}
+  `;
+  document.head.appendChild(style);
+
+  const welcome = $('wel');
+  if (!welcome || !$('go')) return;
+  const actions = document.createElement('div');
+  actions.className = 'ad-start-actions';
+  actions.innerHTML = '<button type="button" id="openHoarding">🪧 Hoarding Ads</button><button type="button" id="openPlansQuick">📋 View Plans</button><button type="button" id="openActiveUsers">🟢 Active Users</button>'; 
+  $('go').insertAdjacentElement('beforebegin', actions);
+  /* Keep ad tools on the initial welcome screen only; hide them after Shuru karo. */
+  $('go').addEventListener('click', () => { actions.hidden = true; });
+
+  const flow = document.createElement('div');
+  flow.id = 'adflow'; flow.hidden = true;
+  flow.innerHTML = `
+    <section class="af-card" role="dialog" aria-modal="true" aria-label="Hoarding Ads">
+      <button type="button" class="af-close" id="afClose">✕ Close</button>
+      <div id="afPlans">
+        <h2>🪧 Hoarding Ads</h2>
+        <p>Promote your business on the in-game hoarding boards. Choose an advertising plan below.</p>
+        <div class="af-row">
+          <button type="button" class="af-plan" data-plan="7">
+            <h3>7 Days Plan</h3><div class="af-price">₹99</div>
+            <div class="af-benefits">✓ 7 din tak ad display<br>✓ Business name aur photo<br>✓ Game ke sabhi hoarding boards<br>✓ WhatsApp support</div>
+          </button>
+          <button type="button" class="af-plan" data-plan="15">
+            <h3>15 Days Plan</h3><div class="af-price">₹159</div>
+            <div class="af-benefits">✓ 15 din tak ad display<br>✓ Business name aur photo<br>✓ Game ke sabhi hoarding boards<br>✓ WhatsApp support<br>✓ 8 extra din, better value</div>
+          </button>
+        </div>
+        <p>Select a plan to view the payment QR code. Payments are verified manually; this page does not automatically verify payments.</p>
+        <button type="button" class="primary" id="afNext" disabled>Next — QR Code dekhein</button>
+      </div>
+      <div id="afPayment" hidden>
+        <h2>💳 Payment</h2><p id="afPaySummary"></p>
+        <img id="afQr" class="af-qr" alt="UPI payment QR code">
+        <p><b>UPI ID:</b> tgrmayank9897@ibl</p>
+        <p>Scan the QR code and pay the exact amount for your selected plan. Then send your payment receipt and advertisement details on WhatsApp.</p>
+        <a id="afWa" href="https://wa.me/918941801033" target="_blank" rel="noopener" style="text-decoration:none"><button type="button" class="primary" style="width:100%">💬 Send Payment Details on WhatsApp</button></a>
+        <div class="af-row"><button type="button" id="afBack">← Back to Plans</button></div>
+      </div>
+      <p id="afStatus" class="af-status" aria-live="polite"></p>
+    </section>`;
+  document.body.appendChild(flow);
+
+  const activeUsersPanel = document.createElement('div');
+  activeUsersPanel.id = 'activeUsersPanel';
+  activeUsersPanel.hidden = true;
+  activeUsersPanel.innerHTML = `
+    <section class="au-card" role="dialog" aria-modal="true" aria-label="Community activity">
+      <button type="button" id="auClose" style="float:right">✕</button>
+      <div class="au-live"><span class="au-dot"></span> COMMUNITY ACTIVITY</div>
+      <div class="au-number" id="auNumber">245,786</div>
+      <div class="au-list" id="auList">
+        <div class="au-row"><span>🎮 Playing the game</span><b id="auCat0">—</b></div>
+        <div class="au-row"><span>🗺️ Exploring the map</span><b id="auCat1">—</b></div>
+        <div class="au-row"><span>🪧 Viewing hoardings</span><b id="auCat2">—</b></div>
+        <div class="au-row"><span>📋 Checking plans</span><b id="auCat3">—</b></div>
+        <div class="au-row"><span>👥 Using invite / social</span><b id="auCat4">—</b></div>
+      </div>
+    </section>`;
+  document.body.appendChild(activeUsersPanel);
+  let auTimer = null;
+  let auAnimationFrame = null;
+  const AU_BASE_COUNT = 245786;
+  // Deterministic time buckets: every device sees the same value at the same time.
+  // This is an animated display counter, not a measured live-user metric.
+  function hashBucket(ms){
+    const bucket = Math.floor(ms / 10000);
+    let x = (bucket ^ 0x5f3759df) >>> 0;
+    x = Math.imul(x ^ (x >>> 16), 0x45d9f3b) >>> 0;
+    x = Math.imul(x ^ (x >>> 16), 0x45d9f3b) >>> 0;
+    return (x ^ (x >>> 16)) >>> 0;
+  }
+  function communityCountForTime(ms){ return AU_BASE_COUNT + (hashBucket(ms) % 1201) - 600; }
+  function communityBreakdown(total, ms){
+    // Deterministic illustrative activity split: same time bucket gives the same list on every device.
+    const h = hashBucket(ms);
+    const weights = [42 + h % 7, 18 + (h >>> 3) % 5, 14 + (h >>> 6) % 5, 10 + (h >>> 9) % 4, 8 + (h >>> 12) % 4];
+    const weightSum = weights.reduce((a,b)=>a+b,0);
+    const counts = weights.map(w => Math.floor(total * w / weightSum));
+    counts[0] += total - counts.reduce((a,b)=>a+b,0);
+    return counts;
+  }
+  function updateCommunityBreakdown(total, ms){
+    communityBreakdown(total, ms).forEach((count, i) => { const el = $('auCat'+i); if(el) el.textContent = count.toLocaleString('en-US'); });
+  }
+  function animateActiveUsers(){
+    activeUsersPanel.hidden = false;
+    if (auTimer) clearInterval(auTimer);
+    if (auAnimationFrame) cancelAnimationFrame(auAnimationFrame);
+    const numberEl = $('auNumber');
+    let displayed = Number((numberEl.textContent || '').replace(/,/g,'')) || communityCountForTime(Date.now());
+    let target = communityCountForTime(Date.now());
+    let startValue = displayed;
+    let startTime = performance.now();
+    const duration = 850;
+    function tick(now){
+      const elapsed = Math.min(1, (now - startTime) / duration);
+      const eased = 1 - Math.pow(1 - elapsed, 3);
+      const value = Math.round(startValue + (target - startValue) * eased);
+      numberEl.textContent = value.toLocaleString('en-US');
+      updateCommunityBreakdown(value, Date.now());
+      if (elapsed < 1) auAnimationFrame = requestAnimationFrame(tick);
+      else auAnimationFrame = null;
+    }
+    auAnimationFrame = requestAnimationFrame(tick);
+    // Refresh gently every 10 seconds; deterministic value is shared across devices by time.
+    updateCommunityBreakdown(target, Date.now());
+    auTimer = setInterval(() => {
+      startValue = Number((numberEl.textContent || '').replace(/,/g,'')) || target;
+      target = communityCountForTime(Date.now());
+      startTime = performance.now();
+      if (auAnimationFrame) cancelAnimationFrame(auAnimationFrame);
+      auAnimationFrame = requestAnimationFrame(tick);
+    }, 10000);
+  }
+  function closeActiveUsers(){activeUsersPanel.hidden=true;if(auTimer){clearInterval(auTimer);auTimer=null;}if(auAnimationFrame){cancelAnimationFrame(auAnimationFrame);auAnimationFrame=null;}}
+  $('openActiveUsers').addEventListener('click', animateActiveUsers);
+  $('topActiveUsers').addEventListener('click', animateActiveUsers);
+  $('topPlans').addEventListener('click', ()=>{chosen=null;document.querySelectorAll('.af-plan').forEach(x=>x.classList.remove('selected'));$('afNext').disabled=true;openFlow('plans');});
+  $('auClose').addEventListener('click', closeActiveUsers);
+  activeUsersPanel.addEventListener('click', e=>{if(e.target===activeUsersPanel)closeActiveUsers();});
+  $('openPlansQuick').addEventListener('click', ()=>{chosen=null;document.querySelectorAll('.af-plan').forEach(x=>x.classList.remove('selected'));$('afNext').disabled=true;openFlow('plans');});
+
+  let chosen = null;
+  const waNumber = '918941801033';
+  function openFlow(section) {
+    flow.hidden = false;
+    $('afPlans').hidden = section !== 'plans';
+    $('afPayment').hidden = section !== 'payment';
+    $('afStatus').textContent = '';
+  }
+  function closeFlow(){flow.hidden=true;}
+  $('openHoarding').addEventListener('click', e=>{e.stopPropagation();chosen=null;document.querySelectorAll('.af-plan').forEach(x=>x.classList.remove('selected'));$('afNext').disabled=true;openFlow('plans')});
+  $('afClose').onclick=closeFlow;
+  flow.addEventListener('pointerdown',e=>e.stopPropagation());
+  flow.addEventListener('touchstart',e=>e.stopPropagation(),{passive:true});
+  document.querySelectorAll('.af-plan').forEach(btn=>btn.addEventListener('click',()=>{
+    chosen=btn.dataset.plan;document.querySelectorAll('.af-plan').forEach(x=>x.classList.toggle('selected',x===btn));$('afNext').disabled=false;
+  }));
+  $('afNext').onclick=()=>{
+    if(!chosen)return;
+    const amount=chosen==='7'?'99':'159',days=chosen==='7'?'7 days':'15 days';
+    const upi='upi://pay?pa='+encodeURIComponent('tgrmayank9897@ibl')+'&pn='+encodeURIComponent('Diwali Mela Ads')+'&am='+amount+'&cu=INR&tn='+encodeURIComponent('Hoarding Ads '+days);
+    $('afPaySummary').textContent='Selected: '+days+' plan — ₹'+amount;
+    $('afQr').src='https://api.qrserver.com/v1/create-qr-code/?size=320x320&data='+encodeURIComponent(upi);
+    const msg='Hello, I would like to advertise on the Diwali Nagar hoarding boards. Plan: '+days+', Amount: ₹'+amount+'. UPI ID: tgrmayank9897@ibl. Please help me verify the payment and set up my advertisement.';
+    $('afWa').href='https://wa.me/'+waNumber+'?text='+encodeURIComponent(msg);
+    openFlow('payment');
+  };
+  $('afBack').onclick=()=>openFlow('plans');
+
+
+})();
+
+</script>
 </body></html>
